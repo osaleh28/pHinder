@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>pHinder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="sky" aria-hidden="true">
+  <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
+  <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
+</div>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>pHinder</h1>
+      <p>Arterial blood gas interpreter</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="View">
+      <button role="tab" id="tab-interpret" aria-selected="true" data-view="interpret">Interpret</button>
+      <button role="tab" id="tab-practice" aria-selected="false" data-view="practice">Practice cases</button>
+    </div>
+    <label class="switch" for="teach">
+      <input type="checkbox" id="teach">
+      <span class="track" aria-hidden="true"></span>
+      Teaching mode
+    </label>
+  </header>
+
+  <section id="view-interpret">
+    <div class="grid">
+      <form class="panel" id="abg-form" autocomplete="off" novalidate>
+        <fieldset>
+          <legend id="gas-legend">Blood gas</legend>
+          <div class="field span"><label for="sample">Sample</label><select id="sample" name="sample"><option value="">Arterial (ABG)</option><option value="venous">Venous (VBG)</option></select></div>
+          <div class="field"><label for="pH"><span class="lbl">pH</span> <span class="flag" data-flag="pH"></span></label><input class="req" id="pH" name="pH" inputmode="decimal" placeholder="7.40"><small id="hint-pH">7.35–7.45</small></div>
+          <div class="field"><label for="PaCO2"><span class="lbl">PaCO₂</span> <span class="flag" data-flag="PaCO2"></span></label><input class="req" id="PaCO2" name="PaCO2" inputmode="decimal" placeholder="40"><small id="hint-PaCO2">35–45 mmHg</small></div>
+          <div class="field"><label for="HCO3">HCO₃⁻ <span class="flag" data-flag="HCO3"></span></label><input class="req" id="HCO3" name="HCO3" inputmode="decimal" placeholder="24"><small id="hint-HCO3">22–26 mEq/L</small></div>
+        </fieldset>
+        <fieldset>
+          <legend>Chemistry</legend>
+          <div class="field"><label for="Na">Na⁺ <span class="flag" data-flag="Na"></span></label><input id="Na" name="Na" inputmode="decimal" placeholder="140"><small>135–145</small></div>
+          <div class="field"><label for="Cl">Cl⁻ <span class="flag" data-flag="Cl"></span></label><input id="Cl" name="Cl" inputmode="decimal" placeholder="104"><small>98–106</small></div>
+          <div class="field"><label for="K">K⁺ <span class="flag" data-flag="K"></span></label><input id="K" name="K" inputmode="decimal" placeholder="4.0"><small>3.5–5.0</small></div>
+          <div class="field"><label for="albumin">Albumin <span class="flag" data-flag="albumin"></span></label><input id="albumin" name="albumin" inputmode="decimal" placeholder="4.0"><small>3.5–5.0 g/dL</small></div>
+          <div class="field"><label for="AGrep">AG (reported)</label><input id="AGrep" name="AGrep" inputmode="decimal"><small>if no Na⁺/Cl⁻</small></div>
+          <div class="field"><label for="lactate">Lactate <span class="flag" data-flag="lactate"></span></label><input id="lactate" name="lactate" inputmode="decimal" placeholder="1.0"><small>&lt; 2 mmol/L</small></div>
+        </fieldset>
+        <fieldset class="two">
+          <legend>Oxygenation</legend>
+          <div class="field"><label for="PaO2"><span class="lbl">PaO₂</span> <span class="flag" data-flag="PaO2"></span></label><input id="PaO2" name="PaO2" inputmode="decimal" placeholder="95"><small id="hint-PaO2">80–100 mmHg</small></div>
+          <div class="field"><label for="o2device">O₂ delivery</label><select id="o2device" name="o2device"><option value="">Not recorded</option><option value="ra">Room air</option><option value="nc">Nasal cannula</option><option value="mask">Simple face mask</option><option value="nrb">Non-rebreather</option><option value="set">Set FiO₂ (vent, high-flow, Venturi)</option></select><small>device</small></div>
+          <div class="field" id="flow-field"><label for="o2flow">O₂ flow</label><input id="o2flow" name="o2flow" inputmode="decimal" placeholder="2"><small>L/min</small></div>
+          <div class="field"><label for="FiO2">FiO₂ %</label><input id="FiO2" name="FiO2" inputmode="decimal"><small id="fio2-hint">needed for A–a</small></div>
+          <div class="field"><label for="age">Age</label><input id="age" name="age" inputmode="numeric" placeholder="50"><small>years</small></div>
+        </fieldset>
+        <fieldset class="two">
+          <legend>Mechanical ventilation</legend>
+          <div class="field span"><label class="check" for="vent"><input type="checkbox" id="vent" name="vent"> Patient is on a ventilator</label></div>
+          <div class="field vent-only"><label for="setRR">Set rate</label><input id="setRR" name="setRR" inputmode="decimal"><small>breaths/min</small></div>
+          <div class="field vent-only"><label for="totalRR">Total rate</label><input id="totalRR" name="totalRR" inputmode="decimal"><small>breaths/min</small></div>
+          <div class="field vent-only"><label for="Vt">Tidal volume</label><input id="Vt" name="Vt" inputmode="decimal"><small>mL</small></div>
+          <div class="field vent-only"><label for="PEEP">PEEP</label><input id="PEEP" name="PEEP" inputmode="decimal"><small>cmH₂O</small></div>
+          <div class="field vent-only"><label for="heightCm">Height</label><input id="heightCm" name="heightCm" inputmode="decimal"><small>cm, for PBW</small></div>
+          <div class="field vent-only"><label for="sex">Sex</label><select id="sex" name="sex"><option value="">Not set</option><option value="f">Female</option><option value="m">Male</option></select><small>for PBW</small></div>
+          <div class="field span vent-only"><label for="context">Clinical context</label><select id="context" name="context"><option value="">None selected</option><option value="ards">ARDS / lung-protective ventilation</option><option value="tbi">Traumatic brain injury</option></select><small>adds guideline context; does not change the read</small></div>
+        </fieldset>
+        <fieldset>
+          <legend>Saturation and co-oximetry</legend>
+          <div class="field"><label for="SaO2">SaO₂ %</label><input id="SaO2" name="SaO2" inputmode="decimal"><small>measured</small></div>
+          <div class="field"><label for="SpO2">SpO₂ %</label><input id="SpO2" name="SpO2" inputmode="decimal"><small>pulse ox</small></div>
+          <div class="field"><label for="Hb">Hb</label><input id="Hb" name="Hb" inputmode="decimal"><small>g/dL</small></div>
+          <div class="field"><label for="COHb">COHb %</label><input id="COHb" name="COHb" inputmode="decimal"><small>&lt; 3</small></div>
+          <div class="field"><label for="MetHb">MetHb %</label><input id="MetHb" name="MetHb" inputmode="decimal"><small>&lt; 2</small></div>
+        </fieldset>
+        <details class="more" id="more">
+          <summary>Osmolal gap, urine studies, usual values, settings</summary>
+          <div class="stack">
+            <fieldset class="two">
+              <legend>Osmolal gap</legend>
+              <div class="field"><label for="osm">Measured Osm</label><input id="osm" name="osm" inputmode="decimal"><small>275–295 mOsm/kg</small></div>
+              <div class="field"><label for="glucose">Glucose</label><input id="glucose" name="glucose" inputmode="decimal"><small>mg/dL</small></div>
+              <div class="field"><label for="BUN">BUN</label><input id="BUN" name="BUN" inputmode="decimal"><small>mg/dL</small></div>
+              <div class="field"><label for="etoh">Ethanol</label><input id="etoh" name="etoh" inputmode="decimal"><small>mg/dL, optional</small></div>
+            </fieldset>
+            <fieldset>
+              <legend>Spot urine</legend>
+              <div class="field"><label for="UNa">U Na⁺</label><input id="UNa" name="UNa" inputmode="decimal"><small>mEq/L</small></div>
+              <div class="field"><label for="UK">U K⁺</label><input id="UK" name="UK" inputmode="decimal"><small>mEq/L</small></div>
+              <div class="field"><label for="UCl">U Cl⁻</label><input id="UCl" name="UCl" inputmode="decimal"><small>mEq/L</small></div>
+            </fieldset>
+            <fieldset class="two">
+              <legend>Patient's usual values (CO₂ retainers)</legend>
+              <div class="field"><label for="usualPaCO2">Usual PaCO₂</label><input id="usualPaCO2" name="usualPaCO2" inputmode="decimal"><small>mmHg, if known</small></div>
+              <div class="field"><label for="usualHCO3">Usual HCO₃⁻</label><input id="usualHCO3" name="usualHCO3" inputmode="decimal"><small>mEq/L, if known</small></div>
+            </fieldset>
+            <fieldset class="two">
+              <legend>Settings</legend>
+              <div class="field"><label for="refAG">Reference AG</label><input id="refAG" name="refAG" inputmode="decimal" placeholder="12"><small>your lab's normal</small></div>
+              <div class="field"><label for="altitude">Altitude (ft)</label><input id="altitude" name="altitude" inputmode="decimal" placeholder="0"><small>blank = sea level</small></div>
+              <div class="field"><label for="Patm">Barometric pressure</label><input id="Patm" name="Patm" inputmode="decimal" placeholder="760"><small>mmHg; overrides altitude</small></div>
+            </fieldset>
+          </div>
+        </details>
+        <div class="actions">
+          <button type="button" class="btn" id="btn-clear">Clear</button>
+          <button type="button" class="btn" id="btn-example">Load an example</button>
+        </div>
+        <p class="hint">Units are mmHg and mEq/L. Results update as you type.</p>
+      </form>
+
+      <div class="results" id="results" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="view-practice" hidden>
+    <div class="practice-intro">
+      <div>
+        <h2>Practice cases</h2>
+        <p>Each case loads into the workbench with the answer hidden. Pick the primary disorder, then reveal the full stepwise read.</p>
+      </div>
+    </div>
+    <div class="cases" id="case-grid"></div>
+  </section>
+
+  <details class="foot" id="about">
+    <summary>Intended use and sources</summary>
+    <p><strong>Intended use.</strong> pHinder is an educational and reference tool for licensed physicians and trainees. It calculates standard acid–base and oxygenation values and shows every formula and threshold it uses, so each result can be checked independently. It does not make a diagnosis, recommend treatment, or suggest ventilator settings; those decisions belong to the treating clinician. It is not intended for time-critical decisions or as a substitute for clinical judgment. It stores no patient data.</p>
+    <p><strong>Rules and sources.</strong> Henderson equation for internal consistency. Winter's formula for metabolic acidosis (Albert, Dell &amp; Winters, 1967). Expected PaCO₂ in metabolic alkalosis, 0.7 per mEq/L rise in HCO₃⁻. Respiratory compensation of 1 and 3.5 (acidosis) and 2 and 4 (alkalosis) mEq/L per 10 mmHg (Adrogué &amp; Madias). Anion gap with albumin correction of 2.5 per g/dL (Figge et al., 1998). Delta ratio, delta gap and corrected bicarbonate. Osmolal gap, urine anion gap and urine chloride. Alveolar gas equation; A–a gradient norm of age ÷ 4 + 4. Berlin definition of ARDS (2012) and the 2023 global definition. Predicted body weight (ARDS Network, 2000). Brain Trauma Foundation guidelines (4th edition, 2016). Nasal cannula FiO₂ estimates are rules of thumb.</p>
+  </details>
+</div>
+
+<script src="js/abg-engine.js"></script>
+<script src="js/abg-cases.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
