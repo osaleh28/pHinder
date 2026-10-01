@@ -213,3 +213,8 @@ A record of how pHinder, an arterial blood gas interpreter, was built with an AI
 
 - **Result:** Step 1 ("Check the numbers agree") now predicts the pH with pH = 6.1 + log₁₀(HCO₃⁻ ÷ (0.03 × PaCO₂)) and compares it with the reported pH. Teaching mode shows the full calculation, including what 6.1 (pKa of carbonic acid) and 0.03 (CO₂ solubility) stand for. The kPa check uses the same equation; the Everest climber is still accepted and a typed 5.3 is still flagged. The sources section, README and code comments now name Henderson–Hasselbalch.
 - **Judgment call:** Values count as consistent if the predicted pH is within 0.05 of the reported pH. A cutoff of 0.04, equivalent to the old 10% rule, flagged the triple-disorder case (pH 7.15, PaCO₂ 40, HCO₃⁻ 15), which predicts 7.20, a gap of 0.047 that is most likely rounding in the textbook values. At 0.05 it passes, while the partially compensated respiratory acidosis example (pH 7.31, PaCO₂ 49, HCO₃⁻ 30, off by 0.10) is still flagged. All 21 practice cases pass.
+
+### 45. Exiting a practice case
+> when we click on "exit case", can you clear the data automatically so that the person doesn't have to press on clear
+
+- **Result:** "Exit case" now runs the same steps as the Clear button: every field is emptied, the case is dropped, the results return to the empty "Enter a pH, PaCO₂ and HCO₃⁻" panel, and the cursor moves to the pH box. Both buttons share one function, so they cannot drift apart.
