@@ -6,6 +6,7 @@
  *        glucose/BUN/ethanol mg/dL, osmolality mOsm/kg, FiO2 % (or fraction), Patm mmHg.
  *
  * References for the rules used here:
+ *  - Henderson–Hasselbalch: pH = 6.1 + log10(HCO3 / (0.03 x PaCO2)); consistent if within 0.05 of the reported pH
  *  - Winter's formula: expected PaCO2 = 1.5 x HCO3 + 8 +/- 2
  *  - Metabolic alkalosis: expected PaCO2 = 40 + 0.7 x (HCO3 - 24) +/- 2
  *  - Respiratory acidosis: HCO3 rises 1 (acute) / 3.5 (chronic) per 10 mmHg PaCO2 rise
@@ -20,6 +21,8 @@
   const NORMAL = { pH: [7.35, 7.45], PaCO2: [35, 45], HCO3: [22, 26] };
   const REF = { pH: 7.4, PaCO2: 40, HCO3: 24, albumin: 4.0 };
   const TOL = 2;
+  const PH_AGREE = 0.05; // predicted vs reported pH: largest difference still accepted as internally consistent
+  function hhPH(hco3, pco2) { return 6.1 + Math.log10(hco3 / (0.03 * pco2)); } // Henderson–Hasselbalch
   // Accepted input ranges. Values outside are rejected as entry errors (typo or wrong units).
   const LIMITS = {
     pH: { name: 'pH', min: 6.5, max: 8.0, range: '6.50–8.00', hint: 'That is outside the survivable range and the reportable range of most analyzers.' },
@@ -165,10 +168,10 @@
     });
     // Likely kPa entry: only when the numbers fit as kPa but not as mmHg (real PaCO2 can be as low as ~10–13 at extreme altitude)
     if (v.PaCO2 !== null && v.pH !== null && v.PaCO2 < 15) {
-      const hM = Math.pow(10, 9 - v.pH); let looksKpa;
+      let looksKpa;
       if (v.HCO3 !== null) {
-        const errMm = Math.abs(24 * v.PaCO2 / v.HCO3 - hM) / hM, errKpa = Math.abs(24 * v.PaCO2 * 7.5006 / v.HCO3 - hM) / hM;
-        looksKpa = errMm > 0.1 && errKpa <= 0.1;
+        const errMm = Math.abs(hhPH(v.HCO3, v.PaCO2) - v.pH), errKpa = Math.abs(hhPH(v.HCO3, v.PaCO2 * 7.5006) - v.pH);
+        looksKpa = errMm > PH_AGREE && errKpa <= PH_AGREE;
       } else looksKpa = v.PaCO2 < 10 && v.pH > 7.2 && v.pH < 7.6;
       if (looksKpa) {
         out.invalid.push({ field: 'PaCO2', name: 'PaCO₂', msg: 'PaCO₂ ' + v.PaCO2 + ' fits the pH and HCO₃⁻ only if it is in kPa: multiply by 7.5 (' + f(v.PaCO2 * 7.5006) + ' mmHg).' });
@@ -226,25 +229,26 @@
     function has(key) { return out.disorders.some(function (x) { return x.key === key || (key === 'metacid' && isMetAcid(x.key)); }); }
 
     // ---------- Step 1: internal consistency (Henderson–Hasselbalch) ----------
-    const hMeas = Math.pow(10, 9 - v.pH);
-    const hCalc = 24 * v.PaCO2 / v.HCO3;
-    const pHcalc = 9 - Math.log10(hCalc);
-    const diff = Math.abs(hCalc - hMeas) / hMeas;
-    d.hMeas = hMeas; d.hCalc = hCalc; d.pHcalc = pHcalc;
+    const ratio20 = v.HCO3 / (0.03 * v.PaCO2);
+    const pHcalc = hhPH(v.HCO3, v.PaCO2);
+    const pHdiff = Math.abs(pHcalc - v.pH);
+    const consistent = pHdiff <= PH_AGREE;
+    d.pHcalc = pHcalc; d.pHdiff = pHdiff;
     out.steps.push({
       id: 'consistency', title: 'Check the numbers agree',
-      tone: diff <= 0.1 ? 'normal' : 'warn',
-      verdict: diff <= 0.1 ? 'Internally consistent' : 'Values do not agree',
-      detail: diff <= 0.1
-        ? 'The reported pH matches the pH predicted from PaCO₂ and HCO₃⁻ (within 10% of [H⁺]).'
+      tone: consistent ? 'normal' : 'warn',
+      verdict: consistent ? 'Internally consistent' : 'Values do not agree',
+      detail: consistent
+        ? 'The reported pH matches the pH predicted from PaCO₂ and HCO₃⁻ by the Henderson–Hasselbalch equation (within ' + PH_AGREE.toFixed(2) + ').'
         : 'The pH predicted from PaCO₂ and HCO₃⁻ is ' + pHcalc.toFixed(2) + ', but the reported pH is ' + v.pH.toFixed(2) + '. Recheck for a transcription error, a venous sample, or HCO₃⁻ taken from a chemistry panel drawn at a different time. The interpretation below may be unreliable.',
       formula: [
-        'Henderson equation: [H⁺] = 24 × PaCO₂ ÷ HCO₃⁻',
-        '= 24 × ' + f(v.PaCO2) + ' ÷ ' + f(v.HCO3) + ' = ' + f(hCalc) + ' nEq/L  (pH ' + pHcalc.toFixed(2) + ')',
-        'Measured [H⁺] = 10^(9 − pH) = ' + f(hMeas) + ' nEq/L;  difference ' + f(diff * 100, 0) + '%'
+        'pH = 6.1 + log₁₀( HCO₃⁻ ÷ (0.03 × PaCO₂) )',
+        '   = 6.1 + log₁₀( ' + f(v.HCO3) + ' ÷ (0.03 × ' + f(v.PaCO2) + ') ) = 6.1 + log₁₀( ' + f(ratio20) + ' ) = ' + pHcalc.toFixed(2),
+        'Measured pH ' + v.pH.toFixed(2) + ';  difference ' + pHdiff.toFixed(2) + ' (accepted ≤ ' + PH_AGREE.toFixed(2) + ')',
+        '6.1 = pKa of carbonic acid;  0.03 = CO₂ solubility;  normal ratio 24 ÷ 1.2 = 20'
       ]
     });
-    if (diff > 0.1) out.warnings.push('pH, PaCO₂ and HCO₃⁻ are not internally consistent (predicted pH ' + pHcalc.toFixed(2) + ').');
+    if (!consistent) out.warnings.push('pH, PaCO₂ and HCO₃⁻ are not internally consistent (predicted pH ' + pHcalc.toFixed(2) + ').');
 
     // ---------- Step 2: pH ----------
     const status = v.pH < NORMAL.pH[0] ? 'acidemia' : v.pH > NORMAL.pH[1] ? 'alkalemia' : 'normal';
@@ -457,7 +461,7 @@
       comp.formula.push('Classic read: ' + out.classic + ' (' + (primary.indexOf('resp') === 0 ? 'HCO₃⁻' : 'PaCO₂') + (compensating ? ' has moved to compensate' : ' is still normal') + (compensating ? (status === 'normal' ? ', pH normal)' : ', pH still abnormal)') : ')'));
       comp.formula.push('The classic label says whether compensation has started. The formulas above say whether it is the right amount; too much or too little means a second disorder.');
     }
-    if (diff > 0.1 && comp.verdict && comp.verdict.indexOf('Concomitant') === 0) {
+    if (!consistent && comp.verdict && comp.verdict.indexOf('Concomitant') === 0) {
       comp.detail += ' Caution: the pH, PaCO₂ and HCO₃⁻ do not agree with each other (step 1), so this second disorder may be an artifact of the numbers rather than a real finding.';
       comp.tone = 'warn';
     }

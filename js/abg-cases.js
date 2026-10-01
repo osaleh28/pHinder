@@ -1,4 +1,4 @@
-/* Practice cases. Values are chosen to be internally consistent (Henderson equation). */
+/* Practice cases. Values are chosen to be internally consistent (Henderson–Hasselbalch, predicted pH within 0.05). */
 (function (root) {
   const CASES = [
     {

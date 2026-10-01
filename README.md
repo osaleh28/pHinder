@@ -15,7 +15,7 @@ Open `index.html` in any browser. To put it online, upload the whole folder to a
 
 ## What the engine does
 1. Rejects values outside accepted ranges (e.g. pH 6.50–8.00, FiO₂ 21–100%) and flags likely unit errors (kPa, mmol/L)
-2. Checks internal consistency with the Henderson equation
+2. Checks internal consistency with the Henderson–Hasselbalch equation, pH = 6.1 + log₁₀(HCO₃⁻ ÷ (0.03 × PaCO₂)), accepting a predicted pH within 0.05 of the reported pH
 3. Classifies the pH and finds the primary process
 4. Checks compensation (Winter's; 0.7 rule for metabolic alkalosis; 1/3.5 and 2/4 per 10 mmHg for respiratory), with a ±2 range and a 1-unit borderline zone
 5. Adds the classic label (uncompensated / partially / fully compensated)
