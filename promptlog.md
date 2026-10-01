@@ -4,7 +4,7 @@ A record of how pHinder, an arterial blood gas interpreter, was built with an AI
 
 - **Builder:** Omar (physician, MBA)
 - **AI assistant:** Claude, in Cowork
-- **Dates:** September 29–30, 2026
+- **Dates:** September 29 – October 1, 2026
 - **Final state:** 21 practice cases and edge-case tests, all passing; plain HTML, CSS and JavaScript; published page plus downloadable files
 
 ---
@@ -203,3 +203,13 @@ A record of how pHinder, an arterial blood gas interpreter, was built with an AI
 
 ### 43. This log
 > can you create a promptlog.md file?
+
+---
+
+## Day 3: October 1, 2026
+
+### 44. Henderson–Hasselbalch consistency check
+> I want to use the Henderson-Hasselbech equation instead of the shortened Henderson equation. I understand that the triple disorder will show that it is inconsistent.
+
+- **Result:** Step 1 ("Check the numbers agree") now predicts the pH with pH = 6.1 + log₁₀(HCO₃⁻ ÷ (0.03 × PaCO₂)) and compares it with the reported pH. Teaching mode shows the full calculation, including what 6.1 (pKa of carbonic acid) and 0.03 (CO₂ solubility) stand for. The kPa check uses the same equation; the Everest climber is still accepted and a typed 5.3 is still flagged. The sources section, README and code comments now name Henderson–Hasselbalch.
+- **Judgment call:** Values count as consistent if the predicted pH is within 0.05 of the reported pH. A cutoff of 0.04, equivalent to the old 10% rule, flagged the triple-disorder case (pH 7.15, PaCO₂ 40, HCO₃⁻ 15), which predicts 7.20, a gap of 0.047 that is most likely rounding in the textbook values. At 0.05 it passes, while the partially compensated respiratory acidosis example (pH 7.31, PaCO₂ 49, HCO₃⁻ 30, off by 0.10) is still flagged. All 21 practice cases pass.
