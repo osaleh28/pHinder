@@ -224,4 +224,4 @@ A record of how pHormula (originally named pHinder), an arterial blood gas inter
 > let's rename this app pHormula
 
 - **AI:** Suggested pHathom, pHocus, pHluent, pHase, pHormula and pHlag, and noted that pHinder was still a strong name.
-- **Result:** Renamed the app to pHormula, after the formulas it shows at every step. Updated the page title, header, intended-use text, README and this log's title. Earlier log entries keep the name pHinder. The GitHub repository and local folder are still named pHinder.
+- **Result:** Renamed the app to pHormula, after the formulas it shows at every step. Updated the page title, header, intended-use text, README and this log's title. Earlier log entries keep the name pHinder. Omar then renamed the GitHub repository to pHormula, and the local copy was pointed at the new address. The local folder is still named pHinder.
