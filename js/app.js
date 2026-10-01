@@ -135,7 +135,13 @@
 
     if (!r.complete) {
       if (r.missing && r.missing.length === 3 && !state.caseId) {
-        html += '<div class="panel empty"><div class="eyebrow">Ready</div><h2>Enter a pH, PaCO₂ and HCO₃⁻</h2><p>Add Na⁺, Cl⁻ and albumin for the anion gap and delta ratio, and PaO₂ with FiO₂ for oxygenation. Or load a practice case to see a full worked read.</p></div>';
+        html += '<div class="panel empty"><div class="eyebrow">Get started</div><h2>Enter a pH, PaCO₂ and HCO₃⁻</h2>' +
+          '<ol class="start-steps">' +
+          '<li><strong>Start with the three gas values.</strong> That is all pHormula needs for a full acid–base read.</li>' +
+          '<li><strong>Add Na⁺, Cl⁻ and albumin</strong> for the anion gap and delta ratio.</li>' +
+          '<li><strong>Add PaO₂ and the oxygen delivery</strong> for the A–a gradient and P/F ratio.</li>' +
+          '</ol><p>Results appear as you type, with every formula shown.</p>' +
+          '<div class="actions"><button type="button" class="btn primary" data-act="example">See a worked example</button><button type="button" class="btn" data-act="practice">Try a practice case</button></div></div>';
       } else if (r.missing) {
         html += '<div class="panel empty"><div class="eyebrow">Almost there</div><h2>Still needed: ' + r.missing.map(function (k) { return { pH: 'pH', PaCO2: 'PaCO₂', HCO3: 'HCO₃⁻' }[k]; }).join(', ') + '</h2><p>These three values are the minimum for an acid–base read.</p></div>';
       }
@@ -198,7 +204,8 @@
   function clearAll() { fillForm({}); state.caseId = null; state.example = null; render(); form.elements.pH.focus(); }
   $('#btn-clear').addEventListener('click', clearAll);
   let exIdx = 0;
-  $('#btn-example').addEventListener('click', function () { exIdx = (exIdx + 1) % CASES.length; loadCase(CASES[exIdx].id, false); });
+  function loadExample() { exIdx = (exIdx + 1) % CASES.length; loadCase(CASES[exIdx].id, false); }
+  $('#btn-example').addEventListener('click', loadExample);
   $('#teach').addEventListener('change', function (e) { state.teach = e.target.checked; store('abg.teach', state.teach ? '1' : '0'); render(); });
   document.querySelectorAll('.tabs button').forEach(function (b) { b.addEventListener('click', function () { showView(b.dataset.view); }); });
   $('#case-grid').addEventListener('click', function (e) { const b = e.target.closest('[data-case]'); if (b) loadCase(b.dataset.case, true); });
@@ -219,9 +226,11 @@
       return;
     }
     if (a.dataset.act === 'exit-case') clearAll();
+    if (a.dataset.act === 'example') loadExample();
+    if (a.dataset.act === 'practice') { showView('practice'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   });
 
-  // Start: a worked example so the page shows what it does; deep link #practice opens the case list
-  if (location.hash === '#practice') { showView('practice'); fillForm({}); render(); }
-  else { loadCase('ards', false, true); }
+  // Start with an empty form and the getting-started panel; deep link #practice opens the case list
+  fillForm({}); render();
+  if (location.hash === '#practice') showView('practice');
 })();

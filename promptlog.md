@@ -225,3 +225,8 @@ A record of how pHormula (originally named pHinder), an arterial blood gas inter
 
 - **AI:** Suggested pHathom, pHocus, pHluent, pHase, pHormula and pHlag, and noted that pHinder was still a strong name.
 - **Result:** Renamed the app to pHormula, after the formulas it shows at every step. Updated the page title, header, intended-use text, README and this log's title. Earlier log entries keep the name pHinder. Omar then renamed the GitHub repository to pHormula, and the local copy was pointed at the new address. The local folder is still named pHinder.
+
+### 47. A blank, friendlier start
+> when this first opens up, do not have anything filled out.  make it more user friendly.
+
+- **Result:** The page no longer loads the ARDS practice case on open; the form starts empty. The results area shows a "Get started" panel with three numbered steps (the three gas values for a full read, Na⁺/Cl⁻/albumin for the anion gap and delta ratio, PaO₂ and oxygen delivery for the A–a gradient and P/F ratio) and two buttons: "See a worked example" and "Try a practice case." The panel returns whenever the form is empty, and nothing takes the cursor on load, so phones do not open the keyboard.
