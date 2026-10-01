@@ -195,7 +195,8 @@
   // ---------- Events ----------
   form.addEventListener('input', function () { state.example = null; render(); });
   form.addEventListener('submit', function (e) { e.preventDefault(); });
-  $('#btn-clear').addEventListener('click', function () { fillForm({}); state.caseId = null; state.example = null; render(); form.elements.pH.focus(); });
+  function clearAll() { fillForm({}); state.caseId = null; state.example = null; render(); form.elements.pH.focus(); }
+  $('#btn-clear').addEventListener('click', clearAll);
   let exIdx = 0;
   $('#btn-example').addEventListener('click', function () { exIdx = (exIdx + 1) % CASES.length; loadCase(CASES[exIdx].id, false); });
   $('#teach').addEventListener('change', function (e) { state.teach = e.target.checked; store('abg.teach', state.teach ? '1' : '0'); render(); });
@@ -217,7 +218,7 @@
       tgt.focus(); tgt.scrollIntoView({ block: 'center', behavior: 'smooth' });
       return;
     }
-    if (a.dataset.act === 'exit-case') { state.caseId = null; render(); }
+    if (a.dataset.act === 'exit-case') clearAll();
   });
 
   // Start: a worked example so the page shows what it does; deep link #practice opens the case list
