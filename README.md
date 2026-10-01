@@ -1,6 +1,6 @@
-# pHinder
+# pHormula
 
-pHinder: a stepwise arterial blood gas (ABG) interpreter. Plain HTML, CSS and JavaScript: no frameworks, no build step, no server.
+pHormula: a stepwise arterial blood gas (ABG) interpreter. Plain HTML, CSS and JavaScript: no frameworks, no build step, no server.
 
 ## Run it
 Open `index.html` in any browser. To put it online, upload the whole folder to any static host (GitHub Pages, Netlify, S3, a hospital intranet web server).
@@ -28,7 +28,7 @@ Open `index.html` in any browser. To put it online, upload the whole folder to a
 12. Ventilator context: minute ventilation, tidal volume per kg PBW, breaths above the set rate, ventilator-driven hypo/hypercapnia, post-hypercapnic pattern, ARDS and TBI guideline context, PEEP-aware Berlin grading
 
 ## Intended use (regulatory design)
-pHinder is built to fit FDA's criteria for non-device clinical decision support software:
+pHormula is built to fit FDA's criteria for non-device clinical decision support software:
 - It displays and analyzes lab values and does not process images or device signals.
 - It is for licensed clinicians and trainees, and supports rather than replaces their judgment.
 - Every result shows its formula, inputs and threshold, so the clinician can independently review the basis.

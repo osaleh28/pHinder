@@ -1,6 +1,6 @@
-# pHinder prompt log
+# pHormula prompt log
 
-A record of how pHinder, an arterial blood gas interpreter, was built with an AI assistant (Claude). Each entry lists the prompt, what the AI did, and the result. Entries marked **Human catch** are where Omar found an error or gap in the AI's work.
+A record of how pHormula (originally named pHinder), an arterial blood gas interpreter, was built with an AI assistant (Claude). Each entry lists the prompt, what the AI did, and the result. Entries marked **Human catch** are where Omar found an error or gap in the AI's work.
 
 - **Builder:** Omar (physician, MBA)
 - **AI assistant:** Claude, in Cowork
@@ -218,3 +218,10 @@ A record of how pHinder, an arterial blood gas interpreter, was built with an AI
 > when we click on "exit case", can you clear the data automatically so that the person doesn't have to press on clear
 
 - **Result:** "Exit case" now runs the same steps as the Clear button: every field is emptied, the case is dropped, the results return to the empty "Enter a pH, PaCO₂ and HCO₃⁻" panel, and the cursor moves to the pH box. Both buttons share one function, so they cannot drift apart.
+
+### 46. Renaming to pHormula
+> is there a better name for the app that we can come up with using pH
+> let's rename this app pHormula
+
+- **AI:** Suggested pHathom, pHocus, pHluent, pHase, pHormula and pHlag, and noted that pHinder was still a strong name.
+- **Result:** Renamed the app to pHormula, after the formulas it shows at every step. Updated the page title, header, intended-use text, README and this log's title. Earlier log entries keep the name pHinder. The GitHub repository and local folder are still named pHinder.
